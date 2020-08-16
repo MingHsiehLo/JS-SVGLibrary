@@ -1,21 +1,14 @@
 class SVGElement {
-    type;
-    node;
-    namespace;
-
     constructor(type) {
         this.type = type;
         this.namespace = 'http://www.w3.org/2000/svg';
-        this.node = function(){
-            document.createElementNS(this.namespace, this.type);
-            return this;
-        }
+        this.node = document.createElementNS(this.namespace, this.type);
+        return this;
     }
 
     attr(attrs) {
-        const value = Object.entries(attrs);
-        for (const key of value) {
-            this.node.setAttributeNS(value[key]);
+        for (const [key, value] of Object.entries(attrs)) {
+            this.node.setAttributeNS(null, key, value);
         }
         return this;
     }
@@ -29,14 +22,13 @@ class SVGElement {
 }
 
 class Sight {
-    svg;
     constructor(selector, width, height) {
-        this.svg = new SVGAElement('svg');
-        this.svg.attr({viewbox: `0 0 ${width} ${height}`});
-        this.svg.append(selector);
+        this.svg = new SVGElement('svg')
+        .attr({viewbox: `0 0 ${width} ${height}`})
+        .append(selector);
     }
 
     draw(type, attrs) {
-        return new SVGAElement(type);
+        return new SVGElement(type).attr(attrs).append(this.svg);
     }
 }
